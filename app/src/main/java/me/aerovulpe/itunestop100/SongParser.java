@@ -1,13 +1,13 @@
 package me.aerovulpe.itunestop100;
 
-import java.io.StringReader;
-import java.util.ArrayList;
+import android.content.Context;
+import android.widget.Toast;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
-import android.content.Context;
-import android.widget.Toast;
+import java.io.StringReader;
+import java.util.ArrayList;
 
 public class SongParser {
 
@@ -34,7 +34,6 @@ public class SongParser {
 
 			while (eventType != XmlPullParser.END_DOCUMENT) {
 				String tagName = xpp.getName();
-				String link = "";
 
 				if (eventType == XmlPullParser.START_DOCUMENT) {
 					// Do nothing.
@@ -47,7 +46,7 @@ public class SongParser {
 					}
 
 					if (inEntry && tagName.equalsIgnoreCase("link")) {
-						link = xpp.getAttributeValue(null, "href");
+						String link = xpp.getAttributeValue(null, "href");
 						int attributeCount = xpp.getAttributeCount();
 						if (attributeCount == 5) {
 							current.setFileLink(link);
@@ -76,7 +75,8 @@ public class SongParser {
 						}else if (tagName.equalsIgnoreCase("image")){
 							current.setImageLink(textValue);
 						}else if (tagName.equalsIgnoreCase("rights")){
-							current.setRights(textValue);
+                            //Remove the extra two spaces at the beginning of the "rights" string
+							current.setRights(textValue.substring(2));
 						}
 					}
 				}
