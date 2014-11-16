@@ -1,7 +1,5 @@
 package me.aerovulpe.itunestop100;
 
-import java.util.ArrayList;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.LayoutInflater;
@@ -11,6 +9,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
 
 public class SongAdapter extends ArrayAdapter<Song> {
 	private Context context;
@@ -94,7 +94,6 @@ public class SongAdapter extends ArrayAdapter<Song> {
 		holder.dateView.setText(dateText);
 		holder.genreView.setText(genreText);
 		holder.thumbnailView.setImageBitmap(thumbnailBitmap);
-		holder.thumbnailView.invalidate();
 
 		return convertView;
 	}
