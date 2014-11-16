@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.top10iosappsdownloader.MainActivity" >
+    
+    <item 
+        android:id="@+id/action_stop"
+        android:showAsAction="ifRoom"
+        android:title="@string/stop"
+        android:icon="@drawable/ic_action_stop"/>
+
+</menu>
