@@ -6,12 +6,12 @@
 
     <ImageView
         android:id="@+id/thumbnail_image"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
         android:layout_margin="5dp"
         android:contentDescription="@string/content_description"
-        android:minHeight="100dp"
-        android:minWidth="100dp" />
+        android:minHeight="75dp"
+        android:minWidth="75dp" />
 
     <RelativeLayout
         android:layout_width="match_parent"
