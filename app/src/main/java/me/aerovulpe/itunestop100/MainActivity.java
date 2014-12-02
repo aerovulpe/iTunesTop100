@@ -1,14 +1,5 @@
 package me.aerovulpe.itunestop100;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -28,6 +19,15 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class MainActivity extends Activity {
 
@@ -270,8 +270,7 @@ public class MainActivity extends Activity {
 			try {
 				mXMLData = downloadXML(urls[0]);
 			} catch (IOException e) {
-				Toast.makeText(MainActivity.this, DOWNLOAD_FAILED,
-						Toast.LENGTH_LONG).show();
+				e.printStackTrace();
 				downloadSuccessful = false;
 				return DOWNLOAD_FAILED;
 			}

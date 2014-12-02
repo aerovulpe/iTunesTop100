@@ -1,20 +1,14 @@
 package me.aerovulpe.itunestop100;
 
-import java.io.InputStream;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.util.Log;
 
 public class Song {
 
-	private String name, artist, date, genre, fileLink, webLink, rights;
+	private String name, artist, date, genre, fileLink, imageLink, webLink, rights;
 
-	private Bitmap thumbnail;
 
 	public String getFileLink() {
 		return fileLink;
@@ -64,31 +58,12 @@ public class Song {
 		this.rights = rights;
 	}
 
-	public Bitmap getThumbnail() {
-		return thumbnail;
+	public String getImageLink() {
+		return imageLink;
 	}
 
 	public void setImageLink(final String imageLink) {
-
-		Runnable downloadImage = new Runnable() {
-
-			@Override
-			public void run() {
-				Bitmap mbitmap = null;
-				try {
-					InputStream in = new java.net.URL(imageLink).openStream();
-					mbitmap = BitmapFactory.decodeStream(in);
-				} catch (Exception e) {
-					Log.e("Error", e.getMessage());
-					e.printStackTrace();
-				}
-				thumbnail = mbitmap;
-			}
-
-		};
-
-		Thread downloadImageThread = new Thread(downloadImage);
-		downloadImageThread.start();
+        this.imageLink = imageLink;
 	}
 
 	public void setDate(String releaseDate) {

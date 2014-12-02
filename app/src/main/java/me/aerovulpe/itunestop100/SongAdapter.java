@@ -1,7 +1,6 @@
 package me.aerovulpe.itunestop100;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +8,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -86,14 +87,17 @@ public class SongAdapter extends ArrayAdapter<Song> {
 		String authorText = songs.get(position).getArtist();
 		String dateText = songs.get(position).getDate();
 		String genreText = songs.get(position).getGenre();
-		Bitmap thumbnailBitmap = songs.get(position).getThumbnail();
+        String imageLink = songs.get(position).getImageLink();
 
 		// Attach data to element subviews via Holder object.
 		holder.nameView.setText(nameText);
 		holder.authorView.setText(authorText);
 		holder.dateView.setText(dateText);
 		holder.genreView.setText(genreText);
-		holder.thumbnailView.setImageBitmap(thumbnailBitmap);
+        Picasso.with(context).load(imageLink)
+                .error(R.drawable.placeholder)
+                .placeholder(R.drawable.placeholder)
+                .into(holder.thumbnailView);
 
 		return convertView;
 	}
