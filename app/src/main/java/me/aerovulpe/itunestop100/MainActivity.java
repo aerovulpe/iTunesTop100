@@ -56,7 +56,7 @@ public class MainActivity extends Activity {
 
 		if (adapter == null) {
 			adapter = new SongAdapter(MainActivity.this,
-					R.layout.application_row);
+					R.layout.song_row);
 			player = new MediaPlayer();
 		}
 
