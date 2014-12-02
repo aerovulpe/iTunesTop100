@@ -1,0 +1,5 @@
+E:\AndroidStudioProjects\iTunesTop100\app\build\intermediates\classes\debug
+E:\AndroidStudioProjects\iTunesTop100\app\build\intermediates\pre-dexed\debug\support-annotations-21.0.0-abcc354e5dc859f25ed4a37a77133cdd37d0f15e.jar
+E:\AndroidStudioProjects\iTunesTop100\app\build\intermediates\pre-dexed\debug\picasso-2.4.0-444b2c2ea26dbd13013227d1f42b224ddbd80a66.jar
+E:\AndroidStudioProjects\iTunesTop100\app\build\intermediates\pre-dexed\debug\internal_impl-21.0.0-a074e9ab2c638194fc33478d764232cb748d2884.jar
+E:\AndroidStudioProjects\iTunesTop100\app\build\intermediates\pre-dexed\debug\classes-451f2544c08b0b9782a49fa0071ea255ace688f9.jar

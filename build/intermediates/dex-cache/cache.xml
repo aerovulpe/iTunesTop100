@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="E:\AndroidStudioProjects\iTunesTop100\app\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.0\libs\internal_impl-21.0.0.jar"
+        jumboMode="false"
+        revision="21.1.1"
+        sha1="1609e6d42d0480b0f4188e2c29f75388fa12a8f0">
+        <dex dex="E:\AndroidStudioProjects\iTunesTop100\app\build\intermediates\pre-dexed\debug\internal_impl-21.0.0-a074e9ab2c638194fc33478d764232cb748d2884.jar" />
+    </item>
+    <item
+        jar="E:\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\21.0.0\support-annotations-21.0.0.jar"
+        jumboMode="false"
+        revision="21.1.1"
+        sha1="1a578b9607b36266c63d43a4fa0ab5664dbe911e">
+        <dex dex="E:\AndroidStudioProjects\iTunesTop100\app\build\intermediates\pre-dexed\debug\support-annotations-21.0.0-abcc354e5dc859f25ed4a37a77133cdd37d0f15e.jar" />
+    </item>
+    <item
+        jar="C:\Users\Aaron\.gradle\caches\modules-2\files-2.1\com.squareup.picasso\picasso\2.4.0\f36d2d4e3a36b3259aaf9d004d29b4cdc6c1bfb2\picasso-2.4.0.jar"
+        jumboMode="false"
+        revision="21.1.1"
+        sha1="f36d2d4e3a36b3259aaf9d004d29b4cdc6c1bfb2">
+        <dex dex="E:\AndroidStudioProjects\iTunesTop100\app\build\intermediates\pre-dexed\debug\picasso-2.4.0-444b2c2ea26dbd13013227d1f42b224ddbd80a66.jar" />
+    </item>
+    <item
+        jar="E:\AndroidStudioProjects\iTunesTop100\app\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.0\classes.jar"
+        jumboMode="false"
+        revision="21.1.1"
+        sha1="686344a780033e4ba22b926cd225f8d4941247e6">
+        <dex dex="E:\AndroidStudioProjects\iTunesTop100\app\build\intermediates\pre-dexed\debug\classes-451f2544c08b0b9782a49fa0071ea255ace688f9.jar" />
+    </item>
+
+</items>
