@@ -1,6 +1,7 @@
 package me.aerovulpe.itunestop100;
 
 import android.content.Context;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,7 +54,7 @@ public class SongAdapter extends ArrayAdapter<Song> {
 			// Subviews via Holder object.
 			holder.nameView = (TextView) convertView
 					.findViewById(R.id.name_text);
-			holder.authorView = (TextView) convertView
+			holder.artistView = (TextView) convertView
 					.findViewById(R.id.artist_text);
 			holder.dateView = (TextView) convertView
 					.findViewById(R.id.date_text);
@@ -61,6 +62,9 @@ public class SongAdapter extends ArrayAdapter<Song> {
 					.findViewById(R.id.genre_text);
 			holder.thumbnailView = (ImageView) convertView
 					.findViewById(R.id.thumbnail_image);
+
+            holder.nameView.setMovementMethod(new ScrollingMovementMethod());
+            holder.artistView.setMovementMethod(new ScrollingMovementMethod());
 
 			// Set OnClickListener
 			holder.thumbnailView.setOnClickListener(new View.OnClickListener() {
@@ -84,14 +88,14 @@ public class SongAdapter extends ArrayAdapter<Song> {
 
 		// Data
 		String nameText = songs.get(position).getName();
-		String authorText = songs.get(position).getArtist();
+		String artistText = songs.get(position).getArtist();
 		String dateText = songs.get(position).getDate();
 		String genreText = songs.get(position).getGenre();
         String imageLink = songs.get(position).getImageLink();
 
 		// Attach data to element subviews via Holder object.
 		holder.nameView.setText(nameText);
-		holder.authorView.setText(authorText);
+		holder.artistView.setText(artistText);
 		holder.dateView.setText(dateText);
 		holder.genreView.setText(genreText);
         Picasso.with(context).load(imageLink)
@@ -108,7 +112,7 @@ public class SongAdapter extends ArrayAdapter<Song> {
 
 	static private class PlaceHolder {
 		TextView nameView;
-		TextView authorView;
+		TextView artistView;
 		TextView dateView;
 		TextView genreView;
 		ImageView thumbnailView;

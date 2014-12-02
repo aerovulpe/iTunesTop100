@@ -18,12 +18,14 @@
     </style>
 
     <style name="autoscroll">
-    <item name="android:singleLine">true</item>
-    <item name="android:ellipsize">marquee</item>
-    <item name="android:marqueeRepeatLimit">marquee_forever</item>
-    <item name="android:focusable">false</item>
-    <item name="android:focusableInTouchMode">false</item>
-    <item name="android:scrollHorizontally">true</item>
-</style>
-    
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:marqueeRepeatLimit">marquee_forever</item>
+        <item name="android:focusable">false</item>
+        <item name="android:focusableInTouchMode">false</item>
+        <item name="android:scrollHorizontally">true</item>
+        <item name="android:scrollbars">vertical</item>
+    </style>
+
+
 </resources>
