@@ -1,7 +1,6 @@
 package me.aerovulpe.itunestop100;
 
 import android.content.Context;
-import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,9 +61,6 @@ public class SongAdapter extends ArrayAdapter<Song> {
 					.findViewById(R.id.genre_text);
 			holder.thumbnailView = (ImageView) convertView
 					.findViewById(R.id.thumbnail_image);
-
-            holder.nameView.setMovementMethod(new ScrollingMovementMethod());
-            holder.artistView.setMovementMethod(new ScrollingMovementMethod());
 
 			// Set OnClickListener
 			holder.thumbnailView.setOnClickListener(new View.OnClickListener() {
