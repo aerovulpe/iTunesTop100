@@ -5,9 +5,12 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 
+import java.util.List;
+
 public class Song {
 
 	private String name, artist, date, genre, fileLink, imageLink, webLink, rights;
+    private boolean selected = false;
 
 
 	public String getFileLink() {
@@ -71,7 +74,15 @@ public class Song {
 		date = releaseDate.substring(0, separator);
 	}
 
-	public void goTo(Context context) {
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void deSelect(){
+        selected = false;
+    }
+
+    public void goTo(Context context) {
 		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(webLink));
 		PackageManager packageManager = context.getPackageManager();
 		int size = packageManager.queryIntentActivities(intent, 0).size();
@@ -79,4 +90,12 @@ public class Song {
 		if (size > 0)
 			context.startActivity(intent);
 	}
+
+    public void select(List<Song> songs){
+        for (Song song : songs){
+            song.deSelect();
+        }
+        selected = true;
+    }
+
 }

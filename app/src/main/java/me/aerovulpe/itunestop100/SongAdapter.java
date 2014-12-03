@@ -14,104 +14,115 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 public class SongAdapter extends ArrayAdapter<Song> {
-	private Context context;
-	private int layoutID;
-	private ArrayList<Song> songs;
+    private Context context;
+    private int layoutID;
+    private ArrayList<Song> songs;
 
-	// Holder object to be recycled.
-	private PlaceHolder holder;
+    // Holder object to be recycled.
+    private PlaceHolder holder;
 
-	SongAdapter(Context context, int layoutID) {
-		super(context, layoutID);
-		this.context = context;
-		this.layoutID = layoutID;
-		this.songs = new ArrayList<Song>();
-	}
+    SongAdapter(Context context, int layoutID) {
+        super(context, layoutID);
+        this.context = context;
+        this.layoutID = layoutID;
+        this.songs = new ArrayList<Song>();
+    }
 
-	@Override
-	public Song getItem(int position) {
-		return songs.get(position);
-	}
+    @Override
+    public Song getItem(int position) {
+        return songs.get(position);
+    }
 
-	@Override
-	public int getCount() {
-		return songs.size();
-	}
+    @Override
+    public int getCount() {
+        return songs.size();
+    }
 
-	public ArrayList<Song> getSongs() {
-		return songs;
-	}
+    public ArrayList<Song> getSongs() {
+        return songs;
+    }
 
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		if (convertView == null) {
-			// Get template element if element not yet created.
-			convertView = LayoutInflater.from(context).inflate(layoutID,
-					parent, false);
-			holder = new PlaceHolder();
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        if (convertView == null) {
+            // Get template element if element not yet created.
+            convertView = LayoutInflater.from(context).inflate(layoutID,
+                    parent, false);
+            holder = new PlaceHolder();
 
-			// Subviews via Holder object.
-			holder.nameView = (TextView) convertView
-					.findViewById(R.id.name_text);
-			holder.artistView = (TextView) convertView
-					.findViewById(R.id.artist_text);
-			holder.dateView = (TextView) convertView
-					.findViewById(R.id.date_text);
-			holder.genreView = (TextView) convertView
-					.findViewById(R.id.genre_text);
-			holder.thumbnailView = (ImageView) convertView
-					.findViewById(R.id.thumbnail_image);
+            // Subviews via Holder object.
+            holder.nameView = (ScrollTextView) convertView
+                    .findViewById(R.id.name_text);
+            holder.artistView = (TextView) convertView
+                    .findViewById(R.id.artist_text);
+            holder.dateView = (TextView) convertView
+                    .findViewById(R.id.date_text);
+            holder.genreView = (TextView) convertView
+                    .findViewById(R.id.genre_text);
+            holder.thumbnailView = (ImageView) convertView
+                    .findViewById(R.id.thumbnail_image);
 
-			// Set OnClickListener
-			holder.thumbnailView.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					int pos = (Integer) v.getTag();
-					String popUp = songs.get(pos).getRights();
-					Toast.makeText(context, popUp, Toast.LENGTH_SHORT).show();
-				}
-			});
+            // holder.nameView.setMovementMethod(new ScrollingMovementMethod());
+            // holder.artistView.setMovementMethod(new ScrollingMovementMethod());
 
-			// Set tag to reference Holder object.
-			convertView.setTag(holder);
-		} else {
-			// Get Holder object from existing element
-			holder = (PlaceHolder) convertView.getTag();
-		}
+            // Set OnClickListener
+            holder.thumbnailView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int pos = (Integer) v.getTag();
+                    String popUp = songs.get(pos).getRights();
+                    Toast.makeText(context, popUp, Toast.LENGTH_SHORT).show();
+                }
+            });
 
-		// Add tag for position reference.
-		holder.thumbnailView.setTag(position);
+            // Set tag to reference Holder object.
+            convertView.setTag(holder);
+        } else {
+            // Get Holder object from existing element
+            holder = (PlaceHolder) convertView.getTag();
+        }
 
-		// Data
-		String nameText = songs.get(position).getName();
-		String artistText = songs.get(position).getArtist();
-		String dateText = songs.get(position).getDate();
-		String genreText = songs.get(position).getGenre();
-        String imageLink = songs.get(position).getImageLink();
+        // Add tag for position reference.
+        holder.thumbnailView.setTag(position);
 
-		// Attach data to element subviews via Holder object.
-		holder.nameView.setText(nameText);
-		holder.artistView.setText(artistText);
-		holder.dateView.setText(dateText);
-		holder.genreView.setText(genreText);
+        Song song = songs.get(position);
+
+        // Data
+        String nameText = song.getName();
+        String artistText = song.getArtist();
+        String dateText = song.getDate();
+        String genreText = song.getGenre();
+        String imageLink = song.getImageLink();
+
+        // Attach data to element subviews via Holder object.
+        holder.nameView.setText(nameText);
+        holder.artistView.setText(artistText);
+        holder.dateView.setText(dateText);
+        holder.genreView.setText(genreText);
         Picasso.with(context).load(imageLink)
                 .error(R.drawable.placeholder)
                 .placeholder(R.drawable.placeholder)
                 .into(holder.thumbnailView);
 
-		return convertView;
-	}
+        if (song.isSelected()){
+            holder.nameView.resumeScroll();
+        }else {
+            holder.nameView.pauseScroll();
+        }
 
-	public void update() {
-		notifyDataSetChanged();
-	}
+        return convertView;
+    }
 
-	static private class PlaceHolder {
-		TextView nameView;
-		TextView artistView;
-		TextView dateView;
-		TextView genreView;
-		ImageView thumbnailView;
-	}
+    public void update() {
+        notifyDataSetChanged();
+    }
+
+    static private class PlaceHolder {
+        ScrollTextView nameView;
+        TextView artistView;
+        TextView dateView;
+        TextView genreView;
+        ImageView thumbnailView;
+    }
 
 }

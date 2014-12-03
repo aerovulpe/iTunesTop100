@@ -52,6 +52,7 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 
 		songList = (ListView) findViewById(R.id.songs_list);
+        songList.setItemsCanFocus(true);
 		adapter = (SongAdapter) getLastNonConfigurationInstance();
 
 		if (adapter == null) {
@@ -68,6 +69,8 @@ public class MainActivity extends Activity {
 					int position, long id) {
 				Song song = adapter.getItem(position);
 				play(song);
+                song.select(adapter.getSongs());
+                adapter.update();
 			}
 		});
 		songList.setOnItemLongClickListener(new OnItemLongClickListener() {

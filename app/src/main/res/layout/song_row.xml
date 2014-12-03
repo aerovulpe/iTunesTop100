@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:orientation="horizontal">
+              android:orientation="horizontal"
+              android:descendantFocusability="blocksDescendants">
 
     <ImageView
         android:id="@+id/thumbnail_image"
@@ -18,7 +19,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
+        <me.aerovulpe.itunestop100.ScrollTextView
             android:id="@+id/name_text"
             style="@style/autoscroll"
             android:layout_width="match_parent"
