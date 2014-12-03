@@ -63,7 +63,7 @@ public class ScrollTextView extends TextView {
      * begin to scroll the text from the original position
      */
     public void startScroll() {
-        // begin from the very left side
+        // begin from the very right side
         mXPaused = -1 * getWidth();
         // assume it's paused
         mPaused = true;
