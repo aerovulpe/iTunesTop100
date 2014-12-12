@@ -52,7 +52,6 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 
 		songList = (ListView) findViewById(R.id.songs_list);
-        songList.setItemsCanFocus(true);
 		adapter = (SongAdapter) getLastNonConfigurationInstance();
 
 		if (adapter == null) {
