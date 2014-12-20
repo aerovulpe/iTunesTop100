@@ -35,6 +35,7 @@ public class MainActivity extends Activity {
     private SongAdapter adapter;
 
     private static MediaPlayer player;
+    private static boolean shouldSkip;
 
     private static final String COUNT_KEY = "me.aerovulpe.itunestop100.MainActivity.INT_KEY";
     private static final String XML_FILE = "me.aerovulpe.itunestop100.MainActivity.XML_FILE";
@@ -84,6 +85,7 @@ public class MainActivity extends Activity {
             @Override
             public void onPrepared(MediaPlayer mp) {
                 player.start();
+                shouldSkip = true;
             }
         });
 
@@ -92,6 +94,7 @@ public class MainActivity extends Activity {
             @Override
             public void onCompletion(MediaPlayer mp) {
                 mp.reset();
+                shouldSkip = false;
                 Song.deSelect(adapter.getSongs());
                 adapter.update();
             }
@@ -120,6 +123,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        if (adapter.getCount() != 0) return;
         xmlData = getXMLFile();
         update();
     }
@@ -165,7 +169,13 @@ public class MainActivity extends Activity {
         int id = item.getItemId();
         if (id == R.id.action_stop) {
             if (player.isPlaying()) player.stop();
-            player.reset();
+            new Thread(){
+                @Override
+                public void run() {
+                    player.reset();
+                    shouldSkip = false;
+                }
+            }.start();
             Song.deSelect(adapter.getSongs());
             adapter.update();
             return true;
@@ -175,16 +185,15 @@ public class MainActivity extends Activity {
 
     public void play(final Song song) {
         AudioManager audiomanager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        if (audiomanager.isMusicActive())
+        if (audiomanager.isMusicActive() || shouldSkip)
             return;
 
         try {
             player.setAudioStreamType(AudioManager.STREAM_MUSIC);
             player.setDataSource(song.getFileLink());
             player.prepareAsync();
-
+            shouldSkip = true;
             song.select(adapter.getSongs());
-
             adapter.update();
         } catch (Exception e) {
             Toast.makeText(MainActivity.this, "Could not play song preview",
