@@ -31,319 +31,331 @@ import java.net.URL;
 
 public class MainActivity extends Activity {
 
-	private String xmlData;
-	private SongAdapter adapter;
+    private String xmlData;
+    private SongAdapter adapter;
 
-	private static MediaPlayer player;
+    private static MediaPlayer player;
 
-	private static final String COUNT_KEY = "me.aerovulpe.itunestop100.MainActivity.INT_KEY";
-	private static final String XML_FILE = "me.aerovulpe.itunestop100.MainActivity.XML_FILE";
+    private static final String COUNT_KEY = "me.aerovulpe.itunestop100.MainActivity.INT_KEY";
+    private static final String XML_FILE = "me.aerovulpe.itunestop100.MainActivity.XML_FILE";
 
-	private static final String TOP_100_URL = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topsongs/limit=100/xml";
+    private static final String TOP_100_URL = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topsongs/limit=100/xml";
 
-	ListView songList;
+    ListView songList;
 
-	private int count;
+    private int count;
 
-	@SuppressWarnings("deprecation")
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+    @SuppressWarnings("deprecation")
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-		songList = (ListView) findViewById(R.id.songs_list);
-		adapter = (SongAdapter) getLastNonConfigurationInstance();
+        songList = (ListView) findViewById(R.id.songs_list);
+        adapter = (SongAdapter) getLastNonConfigurationInstance();
 
-		if (adapter == null) {
-			adapter = new SongAdapter(MainActivity.this,
-					R.layout.song_row);
-			player = new MediaPlayer();
-		}
+        if (adapter == null) {
+            adapter = new SongAdapter(MainActivity.this,
+                    R.layout.song_row);
+            player = new MediaPlayer();
+        }
 
-		songList.setAdapter(adapter);
-		songList.setOnItemClickListener(new OnItemClickListener() {
+        songList.setAdapter(adapter);
+        songList.setOnItemClickListener(new OnItemClickListener() {
 
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				Song song = adapter.getItem(position);
-				play(song);
-                song.select(adapter.getSongs());
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                Song song = adapter.getItem(position);
+                play(song);
+            }
+        });
+        songList.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view,
+                                           int position, long id) {
+                adapter.getItem(position).goTo(view.getContext());
+                return true;
+            }
+        });
+
+        player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                player.start();
+            }
+        });
+
+        player.setOnCompletionListener(new OnCompletionListener() {
+
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mp.reset();
+                Song.deSelect(adapter.getSongs());
                 adapter.update();
-			}
-		});
-		songList.setOnItemLongClickListener(new OnItemLongClickListener() {
+            }
+        });
 
-			@Override
-			public boolean onItemLongClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				adapter.getItem(position).goTo(view.getContext());
-				return true;
-			}
-		});
+        SharedPreferences sharedPreferences = getPreferences(Context.MODE_PRIVATE);
+        count = sharedPreferences.getInt(COUNT_KEY, 0);
+        if (count == 0) {
+            new DownloadTask().execute(TOP_100_URL);
+        } else {
+            update();
+        }
+        count++;
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(COUNT_KEY, count);
+        editor.commit();
+    }
 
-		player.setOnCompletionListener(new OnCompletionListener() {
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (isFinishing() && player != null)
+            player.release();
+    }
 
-			@Override
-			public void onCompletion(MediaPlayer mp) {
-				mp.reset();
-			}
-		});
+    @Override
+    protected void onResume() {
+        super.onResume();
+        xmlData = getXMLFile();
+        update();
+    }
 
-		SharedPreferences sharedPreferences = getPreferences(Context.MODE_PRIVATE);
-		count = sharedPreferences.getInt(COUNT_KEY, 0);
-		if (count == 0) {
-			new DownloadTask().execute(TOP_100_URL);
-		} else {
-			update();
-		}
-		count++;
-		SharedPreferences.Editor editor = sharedPreferences.edit();
-		editor.putInt(COUNT_KEY, count);
-		editor.commit();
-	}
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (xmlData != null)
+            saveXMLFile(xmlData);
+    }
 
-	@Override
-	protected void onPause() {
-		super.onPause();
-		if (isFinishing() && player != null)
-			player.release();
-	}
+    @Override
+    public Object onRetainNonConfigurationInstance() {
+        // Save the SongAdapter instance, because we know the Activity will be
+        // immediately recreated.
+        SongAdapter adapt = adapter;
+        adapter = null; // Prevent onDestroy() from releasing adapter instance
+        return adapt;
+    }
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		xmlData = getXMLFile();
-		update();
-	}
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add("Refresh").setOnMenuItemClickListener(
+                new OnMenuItemClickListener() {
 
-	@Override
-	protected void onStop() {
-		super.onStop();
-		if (xmlData != null)
-			saveXMLFile(xmlData);
-	}
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        new DownloadTask().execute(TOP_100_URL);
+                        return true;
+                    }
 
-	@Override
-	public Object onRetainNonConfigurationInstance() {
-		// Save the SongAdapter instance, because we know the Activity will be
-		// immediately recreated.
-		SongAdapter adapt = adapter;
-		adapter = null; // Prevent onDestroy() from releasing adapter instance
-		return adapt;
-	}
+                });
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add("Refresh").setOnMenuItemClickListener(
-				new OnMenuItemClickListener() {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        if (id == R.id.action_stop) {
+            if (player.isPlaying()) player.stop();
+            player.reset();
+            Song.deSelect(adapter.getSongs());
+            adapter.update();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
-					@Override
-					public boolean onMenuItemClick(MenuItem item) {
-						new DownloadTask().execute(TOP_100_URL);
-						return true;
-					}
+    public void play(final Song song) {
+        AudioManager audiomanager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        if (audiomanager.isMusicActive())
+            return;
 
-				});
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
+        try {
+            player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            player.setDataSource(song.getFileLink());
+            player.prepareAsync();
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_stop) {
-			if (player.isPlaying()) {
-				player.stop();
-				player.reset();
-			}
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
+            song.select(adapter.getSongs());
 
-	public void play(Song song) {
-		AudioManager audiomanager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-		if (audiomanager.isMusicActive())
-			return;
+            adapter.update();
+        } catch (Exception e) {
+            Toast.makeText(MainActivity.this, "Could not play song preview",
+                    Toast.LENGTH_LONG).show();
 
-		try {
-			player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-			player.setDataSource(song.getFileLink());
-			player.prepare();
-			player.start();
-		} catch (Exception e) {
-			Toast.makeText(this, "Could not play song preview",
-					Toast.LENGTH_LONG).show();
-			e.printStackTrace();
-		}
-	}
+            e.printStackTrace();
+        }
+    }
 
-	private void update() {
-		if (adapter == null)
-			return;
 
-		if (SongParser.process(this, adapter.getSongs(), xmlData)) {
-			adapter.update();
-		}
+    private void update() {
+        if (adapter == null)
+            return;
 
-	}
+        if (SongParser.process(this, adapter.getSongs(), xmlData)) {
+            adapter.update();
+        }
 
-	// Reading and Writing
+    }
 
-	public String getXMLFile() {
-		String content = null;
-		FileInputStream fileInputStream = null;
+    // Reading and Writing
 
-		try {
-			fileInputStream = openFileInput(XML_FILE);
-			int size = fileInputStream.available();
-			byte[] bytes = new byte[size];
-			fileInputStream.read(bytes);
-			fileInputStream.close();
-			content = new String(bytes, "UTF-8");
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (fileInputStream != null) {
-				try {
-					fileInputStream.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
+    public String getXMLFile() {
+        String content = null;
+        FileInputStream fileInputStream = null;
 
-		return content;
+        try {
+            fileInputStream = openFileInput(XML_FILE);
+            int size = fileInputStream.available();
+            byte[] bytes = new byte[size];
+            fileInputStream.read(bytes);
+            fileInputStream.close();
+            content = new String(bytes, "UTF-8");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (fileInputStream != null) {
+                try {
+                    fileInputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
-	}
+        return content;
 
-	public void saveXMLFile(String content) {
+    }
 
-		FileOutputStream fileOutputStream = null;
+    public void saveXMLFile(String content) {
 
-		try {
-			fileOutputStream = openFileOutput(XML_FILE, Context.MODE_PRIVATE);
-			byte[] bytes = content.getBytes();
-			fileOutputStream.write(bytes);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (fileOutputStream != null) {
-				try {
-					fileOutputStream.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
+        FileOutputStream fileOutputStream = null;
 
-	}
+        try {
+            fileOutputStream = openFileOutput(XML_FILE, Context.MODE_PRIVATE);
+            byte[] bytes = content.getBytes();
+            fileOutputStream.write(bytes);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (fileOutputStream != null) {
+                try {
+                    fileOutputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
-	private class DownloadTask extends AsyncTask<String, Void, String> {
+    }
 
-		private static final String DOWNLOAD_FAILED = "Unable to download Top 10 Apps file.";
-		private boolean downloadSuccessful = true;
+    private class DownloadTask extends AsyncTask<String, Void, String> {
 
-		String mXMLData;
-		ProgressDialog progDialog;
+        private static final String DOWNLOAD_FAILED = "Unable to download Top 10 Apps file.";
+        private boolean downloadSuccessful = true;
 
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			progDialog = new ProgressDialog(MainActivity.this);
-			progDialog.setMessage("Loading...");
-			progDialog.setIndeterminate(false);
-			progDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-			progDialog.setCancelable(true);
-			progDialog.show();
-		}
+        String mXMLData;
+        ProgressDialog progDialog;
 
-		@Override
-		protected String doInBackground(String... urls) {
-			try {
-				mXMLData = downloadXML(urls[0]);
-			} catch (IOException e) {
-				e.printStackTrace();
-				downloadSuccessful = false;
-				return DOWNLOAD_FAILED;
-			}
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progDialog = new ProgressDialog(MainActivity.this);
+            progDialog.setMessage("Loading...");
+            progDialog.setIndeterminate(false);
+            progDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progDialog.setCancelable(true);
+            progDialog.show();
+        }
 
-			return mXMLData;
-		}
+        @Override
+        protected String doInBackground(String... urls) {
+            try {
+                mXMLData = downloadXML(urls[0]);
+            } catch (IOException e) {
+                e.printStackTrace();
+                downloadSuccessful = false;
+                return DOWNLOAD_FAILED;
+            }
 
-		@Override
-		protected void onPostExecute(String result) {
-			super.onPostExecute(result);
+            return mXMLData;
+        }
 
-			if (progDialog != null) {
-				progDialog.dismiss();
-			}
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
 
-			if (downloadSuccessful) {
-				xmlData = result;
-				update();
-			} else {
-				Toast.makeText(MainActivity.this, DOWNLOAD_FAILED,
-						Toast.LENGTH_SHORT).show();
-			}
-		}
+            if (progDialog != null) {
+                progDialog.dismiss();
+            }
 
-		private String downloadXML(String urlString) throws IOException {
-			final int BUFFER_SIZE = 2000;
-			InputStream inputStream = null;
+            if (downloadSuccessful) {
+                xmlData = result;
+                update();
+            } else {
+                Toast.makeText(MainActivity.this, DOWNLOAD_FAILED,
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
 
-			String xmlContents = "";
+        private String downloadXML(String urlString) throws IOException {
+            final int BUFFER_SIZE = 2000;
+            InputStream inputStream = null;
 
-			try {
-				URL url = new URL(urlString);
-				HttpURLConnection connection = (HttpURLConnection) url
-						.openConnection();
-				connection.setReadTimeout(10000);
-				connection.setConnectTimeout(15000);
-				connection.setRequestMethod("GET");
-				connection.setDoInput(true);
-				int responseCode = connection.getResponseCode();
-				Log.d("DOWNLOADTASK RESPONSE", String.valueOf(responseCode));
-				inputStream = connection.getInputStream();
+            String xmlContents = "";
 
-				InputStreamReader inputreader = new InputStreamReader(
-						inputStream);
+            try {
+                URL url = new URL(urlString);
+                HttpURLConnection connection = (HttpURLConnection) url
+                        .openConnection();
+                connection.setReadTimeout(10000);
+                connection.setConnectTimeout(15000);
+                connection.setRequestMethod("GET");
+                connection.setDoInput(true);
+                int responseCode = connection.getResponseCode();
+                Log.d("DOWNLOADTASK RESPONSE", String.valueOf(responseCode));
+                inputStream = connection.getInputStream();
 
-				int charRead;
+                InputStreamReader inputreader = new InputStreamReader(
+                        inputStream);
 
-				char[] inputBuffer = new char[BUFFER_SIZE];
+                int charRead;
 
-				try {
-					while ((charRead = inputreader.read(inputBuffer)) > 0) {
-						String readString = String.copyValueOf(inputBuffer, 0,
-								charRead);
-						xmlContents += readString;
-						inputBuffer = new char[BUFFER_SIZE];
-					}
+                char[] inputBuffer = new char[BUFFER_SIZE];
 
-					return xmlContents;
-				} catch (IOException e) {
-					e.printStackTrace();
-					Toast.makeText(MainActivity.this, DOWNLOAD_FAILED,
-							Toast.LENGTH_LONG).show();
-					downloadSuccessful = false;
-					return DOWNLOAD_FAILED;
-				}
+                try {
+                    while ((charRead = inputreader.read(inputBuffer)) > 0) {
+                        String readString = String.copyValueOf(inputBuffer, 0,
+                                charRead);
+                        xmlContents += readString;
+                        inputBuffer = new char[BUFFER_SIZE];
+                    }
 
-			} finally {
-				if (inputStream != null)
-					inputStream.close();
-			}
-		}
+                    return xmlContents;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Toast.makeText(MainActivity.this, DOWNLOAD_FAILED,
+                            Toast.LENGTH_LONG).show();
+                    downloadSuccessful = false;
+                    return DOWNLOAD_FAILED;
+                }
 
-	}
+            } finally {
+                if (inputStream != null)
+                    inputStream.close();
+            }
+        }
+
+    }
 }

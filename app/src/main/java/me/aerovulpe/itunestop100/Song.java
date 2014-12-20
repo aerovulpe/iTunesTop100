@@ -82,6 +82,12 @@ public class Song {
         selected = false;
     }
 
+    public static void deSelect(List<Song> songs){
+        for (Song song : songs){
+            song.deSelect();
+        }
+    }
+
     public void goTo(Context context) {
 		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(webLink));
 		PackageManager packageManager = context.getPackageManager();

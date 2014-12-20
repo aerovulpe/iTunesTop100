@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class SongAdapter extends ArrayAdapter<Song> {
     private Context context;
     private int layoutID;
-    private ArrayList<Song> songs;
+    static private ArrayList<Song> songs;
 
     // Holder object to be recycled.
     private PlaceHolder holder;
@@ -25,7 +25,7 @@ public class SongAdapter extends ArrayAdapter<Song> {
         super(context, layoutID);
         this.context = context;
         this.layoutID = layoutID;
-        this.songs = new ArrayList<Song>();
+        this.songs = new ArrayList<>();
     }
 
     @Override
