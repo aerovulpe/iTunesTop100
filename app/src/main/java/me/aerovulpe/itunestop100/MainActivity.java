@@ -271,7 +271,7 @@ public class MainActivity extends Activity {
 
     private class DownloadTask extends AsyncTask<String, Void, String> {
 
-        private static final String DOWNLOAD_FAILED = "Unable to download Top 10 Apps file.";
+        private static final String DOWNLOAD_FAILED = "Unable to update songs";
         private boolean downloadSuccessful = true;
 
         String mXMLData;
